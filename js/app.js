@@ -214,7 +214,7 @@
     var gAbs = $('#g-abstract'), gCnt = $('#g-abstract-count');
     var loaded = null;   // 불러온 신청 내용 (불러온 뒤에만 제목·초록 등을 함께 보냄)
     gAbs.addEventListener('input', function () { gCnt.textContent = gAbs.value.length.toLocaleString('ko-KR') + ' / 3,000'; });
-    function resetLoaded() { loaded = null; $('#g-edit').hidden = true; }
+    function resetLoaded() { loaded = null; $('#g-edit').hidden = true; $('#g-abs').disabled = false; $('#g-full').disabled = false; }
     ['g-id', 'g-email'].forEach(function (i) { $('#' + i).addEventListener('input', resetLoaded); });
 
     $('#g-load').addEventListener('click', function () {
@@ -236,7 +236,10 @@
           $('#g-role').value = r.role || '주저자'; $('#g-equal').checked = !!r.equal;
         }
         $('#g-edit').hidden = false;
-        show(box, 'ok', '현재 저장된 내용을 불러왔습니다. 고칠 항목을 수정하고 “저장”을 눌러 주세요.');
+        var filesClosed = r.filesOpen === false;
+        ['#g-abs', '#g-full'].forEach(function (s) { $(s).disabled = filesClosed; if (filesClosed) $(s).value = ''; });
+        show(box, 'ok', '현재 저장된 내용을 불러왔습니다. 고칠 항목을 수정하고 “저장”을 눌러 주세요.' +
+          (filesClosed ? ' 파일 제출은 ' + (r.filesDeadline || '11월 15일') + '에 마감되어 제목·초록·저자만 고칠 수 있습니다.' : ''));
       }).catch(function (e) { show(box, 'err', e.message); }).then(function () { busy(btn, false); });
     });
 

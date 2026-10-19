@@ -344,7 +344,11 @@ function parseCo_(s) {
 // 반환: { list: [{name, affiliation, role, label}], equal, text }  (발제집 최종판도 이 text를 그대로 사용)
 function authorsFrom_(name, affil, role, coStr, equal) {
   var list = [{ name: String(name || ''), affiliation: String(affil || ''), role: roleOf_(role, '주저자') }].concat(parseCo_(coStr));
-  if (equal) list.sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+  // 가나다순: 유니코드 한글 음절 순서(= 표준 사전 순서). 공백 무시·영문 대소문자 무시, 같으면 입력 순서 유지(안정 정렬)
+  if (equal) list.sort(function (a, b) {
+    var x = sortKey_(a.name), y = sortKey_(b.name);
+    return x < y ? -1 : x > y ? 1 : 0;
+  });
   list.forEach(function (a) { a.label = equal ? (a.role === '교신저자' ? '교신저자' : '') : a.role; });
   var text = list.length < 2 ? '' : list.map(function (a) {
     var inner = [a.affiliation, a.label].filter(Boolean).join(', ');
@@ -352,6 +356,7 @@ function authorsFrom_(name, affil, role, coStr, equal) {
   }).join(', ') + (equal ? ' ※ 동등 기여, 가나다순' : '');
   return { list: list, equal: !!equal, text: text };
 }
+function sortKey_(s) { return String(s || '').replace(/\s+/g, '').toLowerCase(); }
 function abstractText_(id, label, title, name, affil, authorsLine, abstract) {
   return '접수번호: ' + id + '\n유형: ' + label + '\n제목: ' + title + '\n성명: ' + name + '\n소속: ' + affil +
     (authorsLine ? '\n저자: ' + authorsLine : '') + '\n\n[초록]\n' + abstract + '\n';
@@ -439,8 +444,8 @@ function notify_(d, id, kind, topics) {
     d.name + ' 님,\n\n' + label + ' 신청이 접수되었습니다.\n\n접수번호: ' + id +
     '\n제목/분야: ' + (d.title || topics) +
     '\n\n접수번호와 이메일은 자료 제출·수정에 필요하니 보관해 주세요.' +
-    '\n제목(가제목 포함)·초록·공동저자는 마감 전까지 홈페이지의 "자료 제출·수정"에서 고칠 수 있습니다.' +
-    '\n신청 마감: ' + CFG.DEADLINE_APPLY.slice(0, 10) + ' / 최종 자료 마감: ' + CFG.DEADLINE_FINAL.slice(0, 10) +
+    '\n홈페이지의 "자료 제출·수정"에서 파일은 ' + CFG.DEADLINE_FINAL.slice(0, 10) + '까지 제출하고, 제목(가제목 포함)·초록·저자는 ' + CFG.DEADLINE_EDIT.slice(0, 10) + '까지 고칠 수 있습니다.' +
+    '\n신청 마감: ' + CFG.DEADLINE_APPLY.slice(0, 10) + ' / 최종 자료 파일 마감: ' + CFG.DEADLINE_FINAL.slice(0, 10) + ' / 제목·초록·저자 수정 마감: ' + CFG.DEADLINE_EDIT.slice(0, 10) +
     '\n\n한국정보사회학회 조직위원회');
   if (CFG.ADMIN_EMAIL) {
     mail_(CFG.ADMIN_EMAIL, '[접수] ' + id + ' ' + label + ' - ' + d.name,
