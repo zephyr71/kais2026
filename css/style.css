@@ -132,3 +132,11 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .video-icon { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #fff; position: relative; }
 .video-icon::after { content: ""; position: absolute; left: 29px; top: 21px; border-left: 20px solid #fff; border-top: 15px solid transparent; border-bottom: 15px solid transparent; }
 .video-alt { margin: 12px 0 0; font-size: 15px; color: var(--sub); }
+
+/* 공동저자 입력 */
+.co-row { display: grid; grid-template-columns: 1fr 1.4fr 7.5em auto; gap: 8px; margin: 0 0 8px; }
+.co-row input { min-width: 0; }
+.btn.small { padding: 6px 14px; font-size: 14px; }
+@media (max-width: 560px) { .co-row { grid-template-columns: 1fr 1fr; } .co-row .btn { grid-column: 1 / -1; } .co-row input:nth-child(2) { grid-column: 1 / -1; } }
+.check { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 4px; font-weight: 600; }
+.check input { margin-top: 5px; flex: none; }

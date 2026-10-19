@@ -88,6 +88,39 @@
   function busy(btn, on) { btn.disabled = on; if (!btn.dataset.t) btn.dataset.t = btn.textContent; btn.textContent = on ? '처리 중…' : btn.dataset.t; }
   function val(form, name) { var el = form.elements[name]; return el ? String(el.value || '').trim() : ''; }
 
+  /* ---------- 공동저자 입력 목록 ---------- */
+  var MAX_CO = 5;
+  var ROLES = ['주저자', '공동저자', '교신저자'];
+  function authorsLine(a) { return a && a.text ? a.text : ''; }
+  function coWidget(list, addBtn) {
+    function sync() { addBtn.disabled = list.children.length >= MAX_CO; }
+    function addRow(name, aff, role) {
+      var n = h('input', { type: 'text', placeholder: '성명', maxlength: '50', 'aria-label': '공동저자 성명' });
+      var a = h('input', { type: 'text', placeholder: '소속', maxlength: '100', 'aria-label': '공동저자 소속' });
+      var sel = h('select', { 'aria-label': '저자 구분' }, ROLES.map(function (x) { return h('option', { text: x }); }));
+      sel.value = role || '공동저자';
+      var rm = h('button', { type: 'button', 'class': 'btn ghost small', 'aria-label': '이 저자 삭제', text: '삭제' });
+      n.value = name || ''; a.value = aff || '';
+      var row = h('div', { 'class': 'co-row' }, [n, a, sel, rm]);
+      rm.addEventListener('click', function () { list.removeChild(row); sync(); });
+      list.appendChild(row); sync();
+      return n;
+    }
+    addBtn.addEventListener('click', function () { if (list.children.length >= MAX_CO) return; addRow().focus(); });
+    return {
+      get: function () {
+        return $$('.co-row', list).map(function (r) { var i = r.querySelectorAll('input'); return { name: i[0].value.trim(), affiliation: i[1].value.trim(), role: r.querySelector('select').value }; })
+          .filter(function (c) { return c.name || c.affiliation; });
+      },
+      set: function (arr) { list.textContent = ''; (arr || []).slice(0, MAX_CO).forEach(function (c) { addRow(c.name, c.affiliation, c.role); }); sync(); },
+      clear: function () { list.textContent = ''; sync(); }
+    };
+  }
+  function coError(list) {
+    for (var i = 0; i < list.length; i++) if (!list[i].name) return '함께한 저자의 성명을 입력해 주세요.';
+    return null;
+  }
+
   /* ---------- 신청 페이지 ---------- */
   var applyForm = $('#apply-form');
   if (applyForm) {
@@ -123,10 +156,12 @@
       $('#grp-paper').hidden = k === 'discussant';
       $('#grp-topics').hidden = k !== 'discussant';
       $('#grp-publish').hidden = k === 'discussant';
+      $('#grp-coauth').hidden = k === 'discussant';
     }
     $$('input[name=kind]', applyForm).forEach(function (r) { r.addEventListener('change', toggle); });
     toggle();
 
+    var coApply = coWidget($('#coauth-list'), $('#coauth-add'));
     var ta = $('#f-abstract'), cnt = $('#abstract-count');
     ta.addEventListener('input', function () { cnt.textContent = ta.value.length.toLocaleString('ko-KR') + ' / 3,000'; });
 
@@ -149,6 +184,7 @@
       else if (k !== 'discussant' && !d.title) err = '논문 제목(가제목)을 입력해 주세요.';
       else if (k !== 'discussant' && d.abstract.length < 30) err = '초록을 30자 이상 입력해 주세요.';
       else if (k !== 'discussant' && !applyForm.elements.publish.value) err = '공개 범위를 선택해 주세요.';
+      else if (k !== 'discussant' && coError(coApply.get())) err = coError(coApply.get());
       else if (!applyForm.elements.privacy.checked) err = '개인정보 수집·이용에 동의해 주세요.';
       if (err) { show(box, 'err', err); return; }
 
@@ -158,6 +194,8 @@
           action: 'apply', kind: k, name: d.name, affiliation: d.affiliation, phone: d.phone, email: d.email,
           title: k === 'discussant' ? '' : d.title, abstract: k === 'discussant' ? '' : d.abstract,
           topics: k === 'discussant' ? d.topics : [],
+          coauthors: k === 'discussant' ? [] : coApply.get(),
+          role: k === 'discussant' ? '' : $('#f-role').value, equal: k !== 'discussant' && $('#f-equal').checked,
           consent: { privacy: true, publish: k === 'discussant' ? 'none' : applyForm.elements.publish.value },
           files: {}, website: val(applyForm, 'website')
         };
@@ -166,28 +204,77 @@
         return api(payload);
       }).then(function (res) {
         show(box, 'ok', ['신청이 접수되었습니다. 접수번호를 보관해 주세요.', h('span', { 'class': 'big', text: res.id }), '확인 메일을 보냈습니다. 메일이 없으면 스팸함을 확인해 주세요.']);
-        applyForm.reset(); toggle(); cnt.textContent = '0 / 3,000';
+        applyForm.reset(); coApply.clear(); toggle(); cnt.textContent = '0 / 3,000';
       }).catch(function (e) { show(box, 'err', e.message); }).then(function () { busy(btn, false); });
     });
 
-    // 자료 제출·수정
+    // 자료 제출 · 내용 수정
     var fin = $('#final-form');
+    var coFinal = coWidget($('#g-coauth-list'), $('#g-coauth-add'));
+    var gAbs = $('#g-abstract'), gCnt = $('#g-abstract-count');
+    var loaded = null;   // 불러온 신청 내용 (불러온 뒤에만 제목·초록 등을 함께 보냄)
+    gAbs.addEventListener('input', function () { gCnt.textContent = gAbs.value.length.toLocaleString('ko-KR') + ' / 3,000'; });
+    function resetLoaded() { loaded = null; $('#g-edit').hidden = true; }
+    ['g-id', 'g-email'].forEach(function (i) { $('#' + i).addEventListener('input', resetLoaded); });
+
+    $('#g-load').addEventListener('click', function () {
+      var box = $('#final-msg'), btn = $('#g-load');
+      box.hidden = true;
+      var id = val(fin, 'id'), email = val(fin, 'email');
+      if (!id || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { show(box, 'err', '접수번호와 이메일을 확인해 주세요.'); return; }
+      busy(btn, true);
+      api({ action: 'lookup', id: id, email: email, website: val(fin, 'website') }).then(function (r) {
+        if (!r.editable) { show(box, 'err', '수정 기간(' + (r.deadline || '11월 20일') + ')이 지났습니다. 조직위원회로 문의해 주세요.'); return; }
+        loaded = r;
+        $('#g-edit-paper').hidden = !!r.discussant;
+        $('#g-edit-topics').hidden = !r.discussant;
+        if (r.discussant) { $('#g-topics').value = r.topics || ''; }
+        else {
+          $('#g-title').value = r.title || ''; gAbs.value = r.abstract || '';
+          gCnt.textContent = gAbs.value.length.toLocaleString('ko-KR') + ' / 3,000';
+          coFinal.set(r.coauthors);
+          $('#g-role').value = r.role || '주저자'; $('#g-equal').checked = !!r.equal;
+        }
+        $('#g-edit').hidden = false;
+        show(box, 'ok', '현재 저장된 내용을 불러왔습니다. 고칠 항목을 수정하고 “저장”을 눌러 주세요.');
+      }).catch(function (e) { show(box, 'err', e.message); }).then(function () { busy(btn, false); });
+    });
+
     fin.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var box = $('#final-msg'), btn = $('#final-submit');
       box.hidden = true;
       var id = val(fin, 'id'), email = val(fin, 'email');
       if (!id || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { show(box, 'err', '접수번호와 이메일을 확인해 주세요.'); return; }
-      if (!$('#g-abs').files.length && !$('#g-full').files.length) { show(box, 'err', '제출할 파일을 하나 이상 선택해 주세요.'); return; }
+      var hasFile = $('#g-abs').files.length || $('#g-full').files.length;
+      var edit = null;
+      if (loaded) {
+        if (loaded.discussant) {
+          var tp = $('#g-topics').value.trim() ? $('#g-topics').value.split(/[,，、]/).map(function (s) { return s.trim(); }).filter(Boolean) : [];
+          if (tp.length < 1 || tp.length > 3) { show(box, 'err', '희망 분야를 쉼표로 구분해 1~3개 입력해 주세요.'); return; }
+          edit = { topics: tp };
+        } else {
+          var t = $('#g-title').value.trim(), ab = gAbs.value.trim(), co = coFinal.get();
+          if (!t) { show(box, 'err', '논문 제목을 입력해 주세요.'); return; }
+          if (ab.length < 30) { show(box, 'err', '초록을 30자 이상 입력해 주세요.'); return; }
+          if (coError(co)) { show(box, 'err', coError(co)); return; }
+          edit = { title: t, abstract: ab, coauthors: co, role: $('#g-role').value, equal: $('#g-equal').checked };
+        }
+      }
+      if (!hasFile && !edit && !fin.elements.publish.value) { show(box, 'err', '제출할 파일을 하나 이상 선택하거나, “내용 불러오기”로 수정할 항목을 불러와 주세요.'); return; }
       busy(btn, true);
       Promise.all([readFile($('#g-abs'), EXT_ABS), readFile($('#g-full'), EXT_FULL)]).then(function (f) {
         var files = {};
         if (f[0]) files.abstract = f[0];
         if (f[1]) files.fulltext = f[1];
-        return api({ action: 'final', id: id, email: email, files: files, publish: fin.elements.publish.value, website: val(fin, 'website') });
+        var payload = { action: 'final', id: id, email: email, files: files, publish: fin.elements.publish.value, website: val(fin, 'website') };
+        if (edit) Object.keys(edit).forEach(function (k) { payload[k] = edit[k]; });
+        return api(payload);
       }).then(function (res) {
-        show(box, 'ok', [res.message, h('span', { 'class': 'big', text: id + ' · v' + res.version })]);
-        fin.reset();
+        var nodes = [res.message, h('span', { 'class': 'big', text: id + ' · v' + res.version })];
+        if (res.changed && res.changed.length) nodes.push('변경 내용: ' + res.changed.join(', '));
+        show(box, 'ok', nodes);
+        fin.reset(); resetLoaded(); coFinal.clear();
       }).catch(function (e) { show(box, 'err', e.message); }).then(function () { busy(btn, false); });
     });
 
@@ -202,6 +289,7 @@
         show(box, 'ok', [
           h('strong', { text: r.id + ' · ' + r.kind }), h('br'),
           r.title ? r.title : '(제목 없음)', h('br'),
+          (r.coauthors && r.coauthors.length) ? '함께한 저자: ' + r.coauthors.map(function (c) { return c.name + (c.affiliation ? '(' + c.affiliation + ')' : '') + '[' + c.role + ']'; }).join(', ') + (r.equal ? ' · 동등 기여(가나다순)' : '') : '', (r.coauthors && r.coauthors.length) ? h('br') : '',
           '상태: ' + r.status + ' · 제출 버전: ' + r.version, h('br'),
           '초록 파일: ' + (r.hasAbstractFile ? '있음' : '없음') + ' · 원문/발표자료: ' + (r.hasFullText ? '있음' : '없음')
         ]);
@@ -220,7 +308,8 @@
     }
     function match(it, term) {
       if (!term) return true;
-      return [it.title, it.name, it.affiliation, absBox ? it.abstract : ''].join(' ').toLowerCase().indexOf(term) >= 0;
+      var co = ((it.authors && it.authors.list) || []).map(function (c) { return c.name + ' ' + c.affiliation; }).join(' ');
+      return [it.title, it.name, it.affiliation, co, absBox ? it.abstract : ''].join(' ').toLowerCase().indexOf(term) >= 0;
     }
     function render() {
       var term = q ? q.value.trim().toLowerCase() : '';
@@ -232,6 +321,7 @@
       if (withMeta) kids.push(h('div', { 'class': 'meta', text: [it.time, it.kind].filter(Boolean).join(' · ') }));
       kids.push(h('h3', { text: it.title || '(제목 미정)' }));
       kids.push(h('div', { 'class': 'who', text: [it.name, it.affiliation].filter(Boolean).join(' · ') }));
+      if (authorsLine(it.authors)) kids.push(h('div', { 'class': 'who', text: '저자 ' + authorsLine(it.authors) }));
       if (it.abstract) kids.push(h('details', {}, [h('summary', { text: '초록 보기' }), h('p', { text: it.abstract })]));
       return h('div', { 'class': 'item' }, kids);
     }
