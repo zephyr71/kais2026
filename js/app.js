@@ -34,6 +34,24 @@
     acc.hidden = false;
   }
 
+  /* ---------- 소개 영상 (클릭하기 전에는 유튜브에 접속하지 않음) ---------- */
+  var vbox = $('#video-box');
+  if (vbox && /^[A-Za-z0-9_-]{11}$/.test(S.VIDEO_ID || '')) {
+    vbox.hidden = false;
+    $('#video-link').setAttribute('href', 'https://youtu.be/' + S.VIDEO_ID);
+    $('#video-play').addEventListener('click', function () {
+      var f = h('iframe', {
+        src: 'https://www.youtube-nocookie.com/embed/' + S.VIDEO_ID + '?autoplay=1&rel=0',
+        title: '학술대회 소개 영상', allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
+        allowfullscreen: '', referrerpolicy: 'strict-origin-when-cross-origin'
+      });
+      vbox.innerHTML = '';
+      vbox.appendChild(f);
+    });
+  } else if ($('#video')) {
+    $('#video').hidden = true;
+  }
+
   /* ---------- API ---------- */
   function api(payload) {
     if (!S.API_URL) return Promise.reject(new Error('접수 기능이 아직 연결되지 않았습니다. 조직위원회에 문의해 주세요.'));

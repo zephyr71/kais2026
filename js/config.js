@@ -4,7 +4,10 @@ window.SITE = {
   API_URL: 'https://script.google.com/macros/s/AKfycbwumh31zWCwervJ5bdcb3mQ2En8Xx2IwuP86Em2f-J7kS5dnbnNSvi7TUyHbZwv-I6B/exec',
 
   // 참가비 이체 안내 (결제 기능은 없음). number 가 비어 있으면 안내 칸이 보이지 않습니다.
-  ACCOUNT: { bank: '우리은행', number: '1005-903-704920', holder: '' },
+  ACCOUNT: { bank: '우리은행', number: '1005-903-764920', holder: '사단법인한국정보사회' },
+
+  // 학술대회 소개 영상 (유튜브 영상 ID). 비우면 영상 구역이 보이지 않습니다.
+  VIDEO_ID: 'fcs1auD-CiM',
 
   // 발제집 전자책(PDF) 주소. 비어 있으면 "공개 예정" 안내가 보입니다.
   // 예: 'proceedings/2026-proceedings.pdf' (저장소에 올린 경우)
