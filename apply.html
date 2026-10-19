@@ -29,7 +29,7 @@
 <div class="wrap" style="padding-top:48px;padding-bottom:64px">
   <p class="label mono" style="color:var(--accent)">APPLY</p>
   <h1 style="font-size:clamp(28px,5vw,40px)">신청 및 자료 제출</h1>
-  <p class="lead">발표·토론·포스터 신청은 <strong>11월 1일(일)</strong>까지, 최종 발표 자료는 <strong>11월 15일(일)</strong>까지 제출해 주세요.</p>
+  <p class="lead">발표·토론·포스터 신청은 <strong>11월 1일(일)</strong>까지, 최종 발표 자료 파일은 <strong>11월 15일(일)</strong>까지 제출해 주세요. 제목·초록·저자 수정은 <strong>11월 20일(금)</strong>까지 가능합니다.</p>
 
   <div class="tabs" role="tablist" aria-label="신청 메뉴">
     <button role="tab" id="tab-apply" aria-selected="true" aria-controls="panel-apply" data-tab="apply">신청</button>
@@ -59,9 +59,20 @@
         </div>
       </fieldset>
 
+      <fieldset id="grp-coauth">
+        <legend>저자 구분 (선택)</legend>
+        <p class="hint">위 인적 사항은 <strong>신청하시는 분(대표 발표자)</strong>의 정보입니다. 먼저 본인의 저자 구분을 고르고, 함께한 저자가 있으면 성명·소속·구분을 입력해 주세요(최대 5명). 함께한 저자의 이메일·전화번호는 받지 않으며, 접수 확인과 수정은 신청하시는 분의 접수번호와 이메일로만 할 수 있습니다.</p>
+        <div class="field"><label for="f-role">본인의 저자 구분</label>
+          <select id="f-role" name="role"><option>주저자</option><option>공동저자</option><option>교신저자</option></select></div>
+        <div id="coauth-list"></div>
+        <button class="btn ghost small" type="button" id="coauth-add">저자 추가</button>
+        <label class="check"><input type="checkbox" id="f-equal" name="equal"> 모든 저자가 동등하게 기여했습니다.</label>
+        <p class="hint">체크하면 저자 순서를 <strong>가나다순</strong>으로 표기하며 “동등 기여, 가나다순”이라고 안내합니다. 프로그램과 발제집 최종판에도 같은 순서로 실립니다. 이 경우 주저자·공동저자 구분은 표시하지 않고, 교신저자만 표시합니다.</p>
+      </fieldset>
+
       <fieldset id="grp-paper">
         <legend>논문 정보</legend>
-        <div class="field"><label class="req" for="f-title">논문 제목 (가제목 가능)</label><input type="text" id="f-title" name="title" maxlength="200"></div>
+        <div class="field"><label class="req" for="f-title">논문 제목 (가제목 가능)</label><p class="hint">제목이 확정되면 11월 20일까지 “자료 제출·수정”에서 바꿀 수 있습니다.</p><input type="text" id="f-title" name="title" maxlength="200"></div>
         <div class="field">
           <label class="req" for="f-abstract">초록</label>
           <p class="hint">30자 이상 3,000자 이내. 줄바꿈이 그대로 저장됩니다.</p>
@@ -75,7 +86,7 @@
         </div>
         <div class="field">
           <label for="f-full-file">원문 파일 (선택)</label>
-          <p class="hint">논문 원문 또는 발표 자료. 마감(11월 15일) 전까지 “자료 제출·수정”에서 다시 올리실 수 있습니다. hwp, hwpx, doc, docx, pdf, ppt, pptx · 8MB 이하.</p>
+          <p class="hint">논문 원문 또는 발표 자료. 11월 15일까지 “자료 제출·수정”에서 다시 올리실 수 있습니다. hwp, hwpx, doc, docx, pdf, ppt, pptx · 8MB 이하.</p>
           <input type="file" id="f-full-file" accept=".hwp,.hwpx,.doc,.docx,.pdf,.ppt,.pptx">
         </div>
       </fieldset>
@@ -102,7 +113,7 @@
       <fieldset>
         <legend>개인정보 수집·이용 동의</legend>
         <div class="privacy">
-          <strong>수집 항목</strong> 성명, 소속, 전화번호, 이메일, 제출한 논문 정보와 파일<br>
+          <strong>수집 항목</strong> 성명, 소속, 전화번호, 이메일, 제출한 논문 정보와 파일, 공동저자의 성명·소속(대표 발표자가 해당자에게 알리고 입력)<br>
           <strong>이용 목적</strong> 학술대회 신청 접수, 프로그램 구성, 연락, 발제집 제작<br>
           <strong>보유 기간</strong> [조직위원회 확정 후 기재]<br>
           동의를 거부할 수 있으나, 거부하면 신청이 접수되지 않습니다.
@@ -119,14 +130,43 @@
   <!-- 자료 제출·수정 -->
   <div class="panel" id="panel-final" role="tabpanel" aria-labelledby="tab-final" hidden>
     <form id="final-form" novalidate>
-      <p class="lead" style="font-size:17px">신청 후 받은 <strong>접수번호</strong>와 신청 때 쓴 <strong>이메일</strong>이 필요합니다. 마감 전에는 몇 번이든 다시 올릴 수 있고, 이전 파일은 버전으로 보관됩니다.</p>
+      <p class="lead" style="font-size:17px">신청 후 받은 <strong>접수번호</strong>와 신청 때 쓴 <strong>이메일</strong>이 필요합니다. <strong>파일은 11월 15일까지, 제목·초록·저자는 11월 20일까지</strong> 몇 번이든 다시 올리거나 고칠 수 있고, 이전 파일은 버전으로 보관됩니다.</p>
       <p class="hint">최종 자료: 공개용 초록(한글/워드), 발표용 PPT(10~15쪽) 또는 한글/워드 문서(5~7쪽)</p>
       <div class="row2" style="margin-top:18px">
         <div class="field"><label class="req" for="g-id">접수번호</label><input type="text" id="g-id" name="id" placeholder="2026-P-001" required maxlength="30"></div>
         <div class="field"><label class="req" for="g-email">이메일</label><input type="email" id="g-email" name="email" required maxlength="100"></div>
       </div>
-      <div class="field"><label for="g-abs">공개용 초록 파일</label><p class="hint">hwp, hwpx, doc, docx, pdf · 8MB 이하</p><input type="file" id="g-abs" accept=".hwp,.hwpx,.doc,.docx,.pdf"></div>
-      <div class="field"><label for="g-full">발표 자료 / 원문 파일</label><p class="hint">hwp, hwpx, doc, docx, pdf, ppt, pptx · 8MB 이하</p><input type="file" id="g-full" accept=".hwp,.hwpx,.doc,.docx,.pdf,.ppt,.pptx"></div>
+      <p><button class="btn ghost" type="button" id="g-load">내용 불러오기 (제목·초록·공동저자 수정)</button></p>
+
+      <fieldset id="g-edit" hidden>
+        <legend>내용 수정</legend>
+        <p class="hint" id="g-edit-hint">현재 저장된 내용입니다. 바꿀 항목만 고친 뒤 아래 “저장”을 누르세요. 바뀐 내용은 기록으로 남습니다.</p>
+        <div id="g-edit-paper">
+          <div class="field"><label class="req" for="g-title">논문 제목</label><input type="text" id="g-title" maxlength="200"></div>
+          <div class="field">
+            <label class="req" for="g-abstract">초록</label>
+            <p class="hint">30자 이상 3,000자 이내</p>
+            <textarea id="g-abstract" maxlength="3000"></textarea>
+            <div class="count" id="g-abstract-count" aria-live="polite">0 / 3,000</div>
+          </div>
+          <div class="field">
+            <label for="g-role" style="font-weight:700;font-size:15px">본인의 저자 구분</label>
+            <select id="g-role"><option>주저자</option><option>공동저자</option><option>교신저자</option></select>
+          </div>
+          <div class="field">
+            <span class="lab" style="font-weight:700;font-size:15px">함께한 저자 (최대 5명)</span>
+            <div id="g-coauth-list"></div>
+            <button class="btn ghost small" type="button" id="g-coauth-add">저자 추가</button>
+            <label class="check"><input type="checkbox" id="g-equal"> 모든 저자가 동등하게 기여했습니다. (가나다순 표기, 교신저자만 구분 표시)</label>
+          </div>
+        </div>
+        <div id="g-edit-topics" hidden>
+          <div class="field"><label class="req" for="g-topics">희망 분야 또는 주제 (1~3개, 쉼표로 구분)</label><input type="text" id="g-topics" maxlength="150"></div>
+        </div>
+      </fieldset>
+
+      <div class="field"><label for="g-abs">공개용 초록 파일 (선택)</label><p class="hint">hwp, hwpx, doc, docx, pdf · 8MB 이하</p><input type="file" id="g-abs" accept=".hwp,.hwpx,.doc,.docx,.pdf"></div>
+      <div class="field"><label for="g-full">발표 자료 / 원문 파일 (선택)</label><p class="hint">hwp, hwpx, doc, docx, pdf, ppt, pptx · 8MB 이하</p><input type="file" id="g-full" accept=".hwp,.hwpx,.doc,.docx,.pdf,.ppt,.pptx"></div>
       <fieldset>
         <legend>공개 범위 변경 (선택)</legend>
         <div class="choices">
@@ -137,7 +177,7 @@
         </div>
       </fieldset>
       <div class="hp" aria-hidden="true"><label>웹사이트 <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <button class="btn" type="submit" id="final-submit">자료 제출</button>
+      <button class="btn" type="submit" id="final-submit">저장</button>
       <div class="msg" id="final-msg" role="status" aria-live="polite" hidden></div>
     </form>
   </div>
