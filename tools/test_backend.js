@@ -176,7 +176,7 @@ t('수정: 변경 없음·빈 제목·이메일 불일치는 거부하고 버전
 t('수정: 제목 칸에 수식을 넣어도 텍스트로 저장', () => {
   const id = rows[1][1];
   assert.strictEqual(post({ action: 'final', id, email: 'hong@example.com', title: '=SUM(1,1)' }).ok, true);
-  assert.strictEqual(typeof rows[1][7], 'string'); assert.strictEqual(rows[1][7], '=SUM(1,1)');
+  assert.strictEqual(typeof rows[1][7], 'string'); assert.strictEqual(rows[1][7], "'=SUM(1,1)"); assert.strictEqual(post({ action: 'lookup', id, email: 'hong@example.com' }).title, '=SUM(1,1)');
 });
 t('수정: 공개 범위만 바꾸면 버전은 그대로', () => {
   const id = rows[1][1]; const v = rows[1][13]; const cur = rows[1][10];
@@ -259,5 +259,17 @@ t('마감 분리: 파일 접수 종료(FILES_CLOSE) 후에도 내용 수정 가�
   const c = post({ action: 'final', id, email: 'eq@example.com', title: '또 수정' }); const lk2 = post({ action: 'lookup', id, email: 'eq@example.com' });
   ctx.CFG.DEADLINE_EDIT = oldE;
   assert.strictEqual(c.ok, false); assert.strictEqual(lk2.editable, false);
+});
+t('수식 주입: = + - @ 로 시작하는 값은 작은따옴표를 붙여 저장하고, 읽을 때는 원래 글자', () => {
+  const r = post(Object.assign({}, base, { title: '=1+1 수식 시험', abstract: '- 연구 목적: 수식으로 바뀌지 않아야 하는 초록입니다. 삼십 자 이상입니다.', phone: '+82 10 1234 5678', email: 'q@example.com' }));
+  assert.strictEqual(r.ok, true);
+  const row = rows.find(x => x[1] === r.id);
+  assert.strictEqual(row[7], "'=1+1 수식 시험"); assert.ok(row[9].startsWith("'- ")); assert.strictEqual(row[5], "'+82 10 1234 5678");
+  const l = post({ action: 'lookup', id: r.id, email: 'q@example.com' });
+  assert.strictEqual(l.title, '=1+1 수식 시험'); assert.ok(l.abstract.startsWith('- 연구'));
+  const same = post({ action: 'final', id: r.id, email: 'q@example.com', title: '=1+1 수식 시험' });
+  assert.strictEqual(same.ok, false, '같은 제목이면 변경 없음');
+  const e = post({ action: 'final', id: r.id, email: 'q@example.com', title: '+새 제목' });
+  assert.strictEqual(e.ok, true); assert.strictEqual(row[7], "'+새 제목");
 });
 console.log('\n통과 ' + n + '건');

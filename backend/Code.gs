@@ -162,7 +162,7 @@ function final_(p) {
     var sheet = sheet_();
     var r = findRow_(sheet, id, email);
     if (!r) throw userErr_('접수번호와 이메일이 일치하는 신청이 없습니다.');
-    var row = sheet.getRange(r, 1, 1, NCOL).getValues()[0];
+    var row = rows_(sheet.getRange(r, 1, 1, NCOL))[0];
     var isDisc = row[COL.KIND - 1] === CFG.KIND_LABEL.discussant;
     var name = row[COL.NAME - 1];
 
@@ -240,7 +240,7 @@ function lookup_(p) {
   var sheet = sheet_();
   var r = findRow_(sheet, id, email);
   if (!r) throw userErr_('접수번호와 이메일이 일치하는 신청이 없습니다.');
-  var row = sheet.getRange(r, 1, 1, NCOL).getValues()[0];
+  var row = rows_(sheet.getRange(r, 1, 1, NCOL))[0];
   var isDisc = row[COL.KIND - 1] === CFG.KIND_LABEL.discussant;
   return {
     ok: true, id: id, kind: row[COL.KIND - 1], discussant: isDisc, title: row[COL.TITLE - 1],
@@ -261,7 +261,7 @@ function program_() {
   var n = sheet.getLastRow() - 1;
   var items = [];
   if (n > 0) {
-    sheet.getRange(2, 1, n, NCOL).getValues().forEach(function (row) {
+    rows_(sheet.getRange(2, 1, n, NCOL)).forEach(function (row) {
       if (row[COL.STATUS - 1] !== '확정') return;
       var publish = row[COL.PUBLISH - 1];
       items.push({
@@ -299,13 +299,21 @@ function sheet_() {
   return sh;
 }
 
-// 셀을 텍스트 형식으로 바꾼 뒤 값을 넣는다 (수식 주입·날짜 자동 변환 방지). num=true면 숫자로 저장.
+// 셀을 텍스트 형식으로 바꾼 뒤 값을 넣는다 (날짜 자동 변환 방지). num=true면 숫자로 저장.
+// 실제 시트에서는 텍스트 형식이어도 '='로 시작하면 수식이 되므로 safe_로 막는다.
 function setText_(sheet, r, c, v, num) {
   var rg = sheet.getRange(r, c);
   if (num) { rg.setValue(Number(v)); return; }
   rg.setNumberFormat('@');
-  rg.setValue(String(v));
+  rg.setValue(safe_(v));
 }
+
+// 수식 주입 방지: = + - @ 로 시작하는 문자열 앞에 작은따옴표(')를 붙여 글자로 저장.
+// (초록이 "- 연구 목적…"처럼 시작하거나 전화번호가 +82로 시작해도 깨지지 않음)
+function safe_(v) { v = String(v); return /^[=+\-@]/.test(v) ? "'" + v : v; }
+// 읽을 때: 시트가 작은따옴표를 값에 남겨 두는 경우에도 원래 글자로 되돌림
+function unsafe_(v) { return typeof v === 'string' && /^'[=+\-@]/.test(v) ? v.slice(1) : v; }
+function rows_(range) { return range.getValues().map(function (row) { return row.map(unsafe_); }); }
 
 function clip_(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n) + '…' : s; }
 
@@ -380,14 +388,14 @@ function appendRow_(sheet, row) {
   var r = sheet.getLastRow() + 1;
   var range = sheet.getRange(r, 1, 1, NCOL);
   range.setNumberFormat('@');          // 수식 주입 방지: 모든 칸을 텍스트로 저장
-  range.setValues([row.map(function (v) { return typeof v === 'number' ? v : String(v); })]);
+  range.setValues([row.map(function (v) { return typeof v === 'number' ? v : safe_(v); })]);
 }
 
 function findDuplicate_(sheet, kindKey, email, title) {
   var n = sheet.getLastRow() - 1;
   if (n < 1) return '';
   var label = CFG.KIND_LABEL[kindKey];
-  var rows = sheet.getRange(2, 1, n, NCOL).getValues();
+  var rows = rows_(sheet.getRange(2, 1, n, NCOL));
   for (var i = 0; i < rows.length; i++) {
     var rw = rows[i];
     if (rw[COL.KIND - 1] === label && String(rw[COL.EMAIL - 1]).toLowerCase() === email &&
@@ -399,7 +407,7 @@ function findDuplicate_(sheet, kindKey, email, title) {
 function findRow_(sheet, id, email) {
   var n = sheet.getLastRow() - 1;
   if (n < 1 || !id || !email) return 0;
-  var rows = sheet.getRange(2, 1, n, NCOL).getValues();
+  var rows = rows_(sheet.getRange(2, 1, n, NCOL));
   for (var i = 0; i < rows.length; i++) {
     if (String(rows[i][COL.ID - 1]) === id && String(rows[i][COL.EMAIL - 1]).toLowerCase() === email) return i + 2;
   }
