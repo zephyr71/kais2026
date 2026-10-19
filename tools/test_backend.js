@@ -111,9 +111,9 @@ t('최종 자료 제출: 버전 2, 파일명 _v2, 공개범위 변경, 비고 �
 });
 t('최종 제출은 파일 없이 거부', () => { assert.strictEqual(post({ action: 'final', id: '2026-P-001', email: 'hong@example.com', files: {} }).ok, false); });
 t('최종 마감 후 제출 거부', () => {
-  const old = ctx.CFG.DEADLINE_FINAL; ctx.CFG.DEADLINE_FINAL = '2020-01-01T00:00:00+09:00';
-  const r = post({ action: 'final', id: '2026-P-001', email: 'hong@example.com', files: { fulltext: { name: 'a.pdf', data: b64('x') } } }); ctx.CFG.DEADLINE_FINAL = old;
-  assert.strictEqual(r.ok, false);
+  const old = ctx.CFG.FILES_CLOSE; ctx.CFG.FILES_CLOSE = '2020-01-01T00:00:00+09:00';
+  const r = post({ action: 'final', id: '2026-P-001', email: 'hong@example.com', files: { fulltext: { name: 'a.pdf', data: b64('x') } } }); ctx.CFG.FILES_CLOSE = old;
+  assert.strictEqual(r.ok, false); assert.ok(r.error.includes('2026-11-15'), '거부 메시지에는 공지 날짜');
 });
 t('접수 조회: 일치하면 상태 반환, 개인정보(전화·이메일) 미포함', () => {
   const r = post({ action: 'lookup', id: '2026-P-001', email: 'hong@example.com' });
@@ -247,13 +247,13 @@ t('수정: 저자 구분·동등 기여 변경 기록과 버전, 토론·사회�
   const d = post({ action: 'final', id: '2026-D-001', email: 'd@example.com', topics: ['데이터 거버넌스', 'AI'], equal: true, role: '교신저자' });
   const dr = rows.find(x => x[1] === '2026-D-001'); assert.strictEqual(dr[19], ''); assert.strictEqual(dr[20], '');
 });
-t('마감 분리: 파일은 11/15, 내용 수정은 11/20 (11/15 이후에도 내용 수정 가능, 파일은 거부)', () => {
+t('마감 분리: 파일 접수 종료(FILES_CLOSE) 후에도 내용 수정 가능, 파일은 거부', () => {
   const row = rows.find(x => x[7] === '동등 시험'); const id = row[1];
-  const oldF = ctx.CFG.DEADLINE_FINAL; ctx.CFG.DEADLINE_FINAL = '2020-01-01T00:00:00+09:00';
+  const oldF = ctx.CFG.FILES_CLOSE; ctx.CFG.FILES_CLOSE = '2020-01-01T00:00:00+09:00';
   const a = post({ action: 'final', id, email: 'eq@example.com', title: '동등 시험(수정)' });
   const b = post({ action: 'final', id, email: 'eq@example.com', files: { fulltext: { name: 'a.pdf', data: b64('x') } } });
   const lk = post({ action: 'lookup', id, email: 'eq@example.com' });
-  ctx.CFG.DEADLINE_FINAL = oldF;
+  ctx.CFG.FILES_CLOSE = oldF;
   assert.strictEqual(a.ok, true); assert.strictEqual(b.ok, false); assert.strictEqual(lk.editable, true); assert.strictEqual(lk.filesOpen, false);
   const oldE = ctx.CFG.DEADLINE_EDIT; ctx.CFG.DEADLINE_EDIT = '2020-01-01T00:00:00+09:00';
   const c = post({ action: 'final', id, email: 'eq@example.com', title: '또 수정' }); const lk2 = post({ action: 'lookup', id, email: 'eq@example.com' });

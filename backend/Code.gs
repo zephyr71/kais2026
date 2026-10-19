@@ -15,7 +15,8 @@ var CFG = {
   REPLY_TO: '',      // 참가자 문의 회신 주소 (선택)
   CONF_NAME: '2026년 한국정보사회학회 가을철 정기학술대회',
   DEADLINE_APPLY: '2026-11-01T23:59:59+09:00',
-  DEADLINE_FINAL: '2026-11-15T23:59:59+09:00',   // 파일(초록·원문·발표자료) 제출 마감
+  DEADLINE_FINAL: '2026-11-15T23:59:59+09:00',   // 파일(초록·원문·발표자료) 제출 마감 — 공지·안내 문구에 쓰는 날짜
+  FILES_CLOSE: '2026-11-20T23:59:59+09:00',      // 파일 실제 접수 종료 (공지하지 않는 유예 기간. 안내 문구에는 쓰지 않음)
   DEADLINE_EDIT: '2026-11-20T23:59:59+09:00',    // 제목·초록·저자 수정 마감
   MAX_FILE_BYTES: 8 * 1024 * 1024,
   EXT: ['hwp', 'hwpx', 'doc', 'docx', 'pdf', 'ppt', 'pptx'],
@@ -150,8 +151,8 @@ function final_(p) {
   if (p.equal !== undefined) edit.equal = p.equal === true ? '동등' : '';
   var newPublish = CFG.PUBLISH.indexOf(p.publish) >= 0 ? p.publish : '';
 
-  // 마감: 파일은 DEADLINE_FINAL, 제목·초록·저자·공개범위 수정은 DEADLINE_EDIT
-  if (hasFiles) checkDeadline_(CFG.DEADLINE_FINAL, '파일 제출');
+  // 마감: 파일은 FILES_CLOSE(공지는 DEADLINE_FINAL), 제목·초록·저자·공개범위 수정은 DEADLINE_EDIT
+  if (hasFiles) checkDeadline_(CFG.FILES_CLOSE, '파일 제출', CFG.DEADLINE_FINAL);
   if (Object.keys(edit).length || newPublish) checkDeadline_(CFG.DEADLINE_EDIT, '내용 수정');
   if (!hasFiles && !Object.keys(edit).length && !newPublish) throw userErr_('변경할 내용이나 제출할 파일이 없습니다.');
 
@@ -249,7 +250,7 @@ function lookup_(p) {
     status: row[COL.STATUS - 1], version: row[COL.VER - 1],
     hasAbstractFile: !!row[COL.ABS_FILE - 1], hasFullText: !!row[COL.FULL_FILE - 1],
     editable: new Date() <= new Date(CFG.DEADLINE_EDIT), deadline: CFG.DEADLINE_EDIT.slice(0, 10),
-    filesOpen: new Date() <= new Date(CFG.DEADLINE_FINAL), filesDeadline: CFG.DEADLINE_FINAL.slice(0, 10)
+    filesOpen: new Date() <= new Date(CFG.FILES_CLOSE), filesDeadline: CFG.DEADLINE_FINAL.slice(0, 10)
   };
 }
 
@@ -362,8 +363,9 @@ function abstractText_(id, label, title, name, affil, authorsLine, abstract) {
     (authorsLine ? '\n저자: ' + authorsLine : '') + '\n\n[초록]\n' + abstract + '\n';
 }
 
-function checkDeadline_(iso, label) {
-  if (new Date() > new Date(iso)) throw userErr_(label + ' 마감(' + iso.slice(0, 10) + ')이 지났습니다.');
+// shown: 안내할 마감일(생략하면 iso). 유예 기간이 있어도 메시지에는 공지한 날짜만 보입니다.
+function checkDeadline_(iso, label, shown) {
+  if (new Date() > new Date(iso)) throw userErr_(label + ' 마감(' + (shown || iso).slice(0, 10) + ')이 지났습니다.');
 }
 
 function nextId_(kind) {
