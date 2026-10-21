@@ -144,3 +144,6 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 .video.vertical { aspect-ratio: 9 / 16; max-width: 360px; margin-left: 0; margin-right: auto; }
 #venue h3 { margin: 36px 0 0; font-size: 22px; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 22px; }
+.map-fig { margin: 28px 0 0; }
+.map-fig img { width: 100%; height: auto; display: block; border: 1.5px solid var(--ink); }
+.map-fig figcaption { margin-top: 10px; font-size: 16px; font-weight: 600; }

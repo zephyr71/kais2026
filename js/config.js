@@ -9,6 +9,9 @@ window.SITE = {
   // 학술대회 소개 영상 (유튜브 영상 ID). 비우면 영상 구역이 보이지 않습니다.
   VIDEO_ID: 'fcs1auD-CiM',
 
+  // 종로07 탑승 후 운동장 정류장까지 영상 (유튜브 쇼츠 ID). 비우면 보이지 않습니다.
+  BUS_VIDEO_ID: 'mO_ZNuycknM',
+
   // 호암관 건물 안 길 안내 영상 (유튜브 쇼츠 영상 ID). 비우면 보이지 않습니다.
   INDOOR_VIDEO_ID: 'kPjMg-olgho',
 

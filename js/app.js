@@ -52,21 +52,24 @@
     $('#video').hidden = true;
   }
 
-  /* ---------- 호암관 안 길 안내 영상 (세로형 쇼츠, 클릭 전에는 접속하지 않음) ---------- */
-  var ibox = $('#indoor-box');
-  if (ibox && /^[A-Za-z0-9_-]{11}$/.test(S.INDOOR_VIDEO_ID || '')) {
-    $('#indoor').hidden = false;
-    $('#indoor-link').setAttribute('href', 'https://youtube.com/shorts/' + S.INDOOR_VIDEO_ID);
-    $('#indoor-play').addEventListener('click', function () {
+  /* ---------- 세로형 쇼츠 영상 2개 (클릭 전에는 유튜브에 접속하지 않음) ---------- */
+  function shorts(prefix, id, title) {
+    var box = $('#' + prefix + '-box');
+    if (!box || !/^[A-Za-z0-9_-]{11}$/.test(id || '')) return;
+    $('#' + prefix).hidden = false;
+    $('#' + prefix + '-link').setAttribute('href', 'https://youtube.com/shorts/' + id);
+    $('#' + prefix + '-play').addEventListener('click', function () {
       var f = h('iframe', {
-        src: 'https://www.youtube-nocookie.com/embed/' + S.INDOOR_VIDEO_ID + '?autoplay=1&rel=0&playsinline=1',
-        title: '호암관 안 길 안내 영상', allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
+        src: 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1',
+        title: title, allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
         allowfullscreen: '', referrerpolicy: 'strict-origin-when-cross-origin'
       });
-      ibox.innerHTML = '';
-      ibox.appendChild(f);
+      box.innerHTML = '';
+      box.appendChild(f);
     });
   }
+  shorts('bus', S.BUS_VIDEO_ID, '종로07 탑승 후 운동장 정류장까지 영상');
+  shorts('indoor', S.INDOOR_VIDEO_ID, '호암관 안 길 안내 영상');
 
   /* ---------- API ---------- */
   function api(payload) {

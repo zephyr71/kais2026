@@ -234,6 +234,10 @@ const submit = (w, form) => form.dispatchEvent(new w.Event('submit', { cancelabl
     d.querySelector('#indoor-play').click();
     assert.ok(d.querySelector('#indoor-box iframe').getAttribute('src').includes('youtube-nocookie.com/embed/kPjMg-olgho')); ok('홈: 길 안내 영상 클릭 시 nocookie 임베드');
     assert.ok(d.querySelector('#venue').textContent.includes('성균관로 25-2') && d.querySelector('#map-skku').href.startsWith('https://admission.skku.edu/')); ok('홈: 오시는 길 주소·지도 링크');
+    assert.strictEqual(d.querySelector('#bus').hidden, false); d.querySelector('#bus-play').click();
+    assert.ok(d.querySelector('#bus-box iframe').getAttribute('src').includes('youtube-nocookie.com/embed/mO_ZNuycknM')); ok('홈: 종로07 영상 클릭 시 nocookie 임베드');
+    assert.ok(d.querySelector('#venue').textContent.includes('명륜동2가(성균관대입구)(01227) 하차 — 151, 171, 172, 272, 601') && d.querySelector('#venue').textContent.includes('성균관대운동장” 정류장까지')); ok('홈: 추가 정류장·종로07 안내 문구');
+    assert.ok(d.querySelector('.map-fig img').getAttribute('src') === 'images/hoam-map.jpg' && d.querySelector('.map-fig img').alt); ok('홈: 호암관 약도 이미지와 대체 텍스트');
     const ni = await load('index.html', w => { w.SITE.INDOOR_VIDEO_ID = ''; }); assert.strictEqual(ni.d.querySelector('#indoor').hidden, true); ok('홈: 길 안내 영상 ID 없으면 숨김');
     const nv = await load('index.html', w => { w.SITE.VIDEO_ID = ''; });
     assert.strictEqual(nv.d.querySelector('#video').hidden, true); ok('홈: 영상 ID가 없으면 구역 숨김');
