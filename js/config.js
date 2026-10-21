@@ -9,6 +9,9 @@ window.SITE = {
   // 학술대회 소개 영상 (유튜브 영상 ID). 비우면 영상 구역이 보이지 않습니다.
   VIDEO_ID: 'fcs1auD-CiM',
 
+  // 호암관 건물 안 길 안내 영상 (유튜브 쇼츠 영상 ID). 비우면 보이지 않습니다.
+  INDOOR_VIDEO_ID: 'kPjMg-olgho',
+
   // 발제집 전자책(PDF) 주소. 비어 있으면 "공개 예정" 안내가 보입니다.
   // 예: 'proceedings/2026-proceedings.pdf' (저장소에 올린 경우)
   PROCEEDINGS_URL: '',

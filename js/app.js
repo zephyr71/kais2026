@@ -52,6 +52,22 @@
     $('#video').hidden = true;
   }
 
+  /* ---------- 호암관 안 길 안내 영상 (세로형 쇼츠, 클릭 전에는 접속하지 않음) ---------- */
+  var ibox = $('#indoor-box');
+  if (ibox && /^[A-Za-z0-9_-]{11}$/.test(S.INDOOR_VIDEO_ID || '')) {
+    $('#indoor').hidden = false;
+    $('#indoor-link').setAttribute('href', 'https://youtube.com/shorts/' + S.INDOOR_VIDEO_ID);
+    $('#indoor-play').addEventListener('click', function () {
+      var f = h('iframe', {
+        src: 'https://www.youtube-nocookie.com/embed/' + S.INDOOR_VIDEO_ID + '?autoplay=1&rel=0&playsinline=1',
+        title: '호암관 안 길 안내 영상', allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
+        allowfullscreen: '', referrerpolicy: 'strict-origin-when-cross-origin'
+      });
+      ibox.innerHTML = '';
+      ibox.appendChild(f);
+    });
+  }
+
   /* ---------- API ---------- */
   function api(payload) {
     if (!S.API_URL) return Promise.reject(new Error('접수 기능이 아직 연결되지 않았습니다. 조직위원회에 문의해 주세요.'));
