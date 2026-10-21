@@ -230,6 +230,11 @@ const submit = (w, form) => form.dispatchEvent(new w.Event('submit', { cancelabl
     assert.strictEqual(d.querySelector('#video-box').hidden, false); assert.ok(!d.querySelector('#video-box iframe')); ok('홈: 영상은 클릭 전에는 iframe 없이 표시');
     d.querySelector('#video-play').click();
     assert.ok(d.querySelector('#video-box iframe').getAttribute('src').startsWith('https://www.youtube-nocookie.com/embed/')); ok('홈: 재생 클릭 시 nocookie 임베드 생성');
+    assert.strictEqual(d.querySelector('#indoor').hidden, false); assert.ok(!d.querySelector('#indoor-box iframe')); ok('홈: 건물 안 길 안내 영상은 클릭 전 iframe 없음');
+    d.querySelector('#indoor-play').click();
+    assert.ok(d.querySelector('#indoor-box iframe').getAttribute('src').includes('youtube-nocookie.com/embed/kPjMg-olgho')); ok('홈: 길 안내 영상 클릭 시 nocookie 임베드');
+    assert.ok(d.querySelector('#venue').textContent.includes('성균관로 25-2') && d.querySelector('#map-skku').href.startsWith('https://admission.skku.edu/')); ok('홈: 오시는 길 주소·지도 링크');
+    const ni = await load('index.html', w => { w.SITE.INDOOR_VIDEO_ID = ''; }); assert.strictEqual(ni.d.querySelector('#indoor').hidden, true); ok('홈: 길 안내 영상 ID 없으면 숨김');
     const nv = await load('index.html', w => { w.SITE.VIDEO_ID = ''; });
     assert.strictEqual(nv.d.querySelector('#video').hidden, true); ok('홈: 영상 ID가 없으면 구역 숨김');
   }
