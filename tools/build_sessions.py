@@ -43,6 +43,7 @@ def when(ev):
 def person_line(role, text):
     return f'<div class="rl"><span class="role">{e(role)}</span><span>{e(text)}</span></div>'
 
+EQ = ' ※ 동등 기여, 가나다순'
 out = []
 for ev in D['events']:
     t = ev['type']
@@ -59,7 +60,7 @@ for ev in D['events']:
         for tm in ev['teams']:
             ti = tm['title']
             tcls = ' class="tbd"' if ti.startswith('(') else ''
-            lis.append(f'<li><span{tcls}>{e(ti)}</span><small>{e(tm["authors"])}</small></li>')
+            lis.append(f'<li><span{tcls}>{e(ti)}</span><small>{e(tm["authors"])}{EQ if tm.get("equal") else ""}</small></li>')
         out.append(f'''<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">
 <p class="part">{e(ev["part"])} {room_tag(ev["room"])}</p><h2>{e(ev["title"])}</h2>
 <ul class="posters">{"".join(lis)}</ul></div></article>''')
@@ -77,7 +78,7 @@ for ev in D['events']:
             else:
                 au = e(tk['presenter'])
             tcls = ' class="tbd"' if '업데이트 예정' in tk['title'] else ''
-            rows.append(f'<div class="rl talk"><span class="role">발표</span><span><b{tcls}>{e(tk["title"])}</b><small>{au}</small></span></div>')
+            rows.append(f'<div class="rl talk"><span class="role">발표</span><span><b{tcls}>{e(tk["title"])}</b><small>{au}{EQ if tk.get('equal') else ''}</small></span></div>')
         if ev.get('discussants'):
             rows.append(person_line('종합토론', ev['discussants']))
         out.append(f'<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">{"".join(parts)}{"".join(rows)}</div></article>')
