@@ -29,7 +29,8 @@ for ev in D['events']:
 ticks = ''.join(
     f'<i class="tick" style="left:{(h-12)*60/(DAY1-DAY0)*100:.3f}%"><b>{h}</b></i>' for h in range(12, 19))
 def lane(label, key, cls):
-    return f'<div class="lane-label {cls}">{e(label)}</div><div class="lane">{"".join(lanes[key])}</div>'
+    no = f'<small>{e(D["room_nos"][key-1])}</small>' if key else ''
+    return f'<div class="lane-label {cls}">{e(label)}{no}</div><div class="lane">{"".join(lanes[key])}</div>'
 ruler = f'''<figure class="day" aria-label="하루 일정 한눈에 보기" style="--n:{NH:.4f}">
 <div class="axis-label"></div><div class="axis" aria-hidden="true">{ticks}</div>
 {lane("전체", 0, "r0")}{lane(D["rooms"][0], 1, "r1")}{lane(D["rooms"][1], 2, "r2")}
@@ -37,7 +38,7 @@ ruler = f'''<figure class="day" aria-label="하루 일정 한눈에 보기" styl
 
 # ---- 본문 ----
 def room_tag(i):
-    return f'<span class="room r{i}"><i></i>{e(room_name(i))}</span>'
+    return f'<span class="room r{i}"><i></i>{e(room_name(i))} <em>{e(D["room_nos"][i-1])}</em></span>'
 
 def when(ev):
     return f'<div class="when"><time>{ev["start"]}</time><span>{ev["end"]}</span></div>'

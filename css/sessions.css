@@ -69,3 +69,5 @@
 @media (max-width: 560px) { .seg.r0 { font-size: 11px; } }
 .talk u { text-underline-offset: 3px; text-decoration-thickness: 1px; }
 @media (max-width: 560px) { .seg.narrow span { display: none; } }
+.room em { font-style: normal; font-weight: 400; color: var(--muted); }
+.lane-label small { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); }
