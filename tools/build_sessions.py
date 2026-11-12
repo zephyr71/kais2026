@@ -118,7 +118,6 @@ page = f'''<!doctype html>
   <dl class="facts">
     <div><dt>일시</dt><dd>{e(D["when"])}</dd></div>
     <div><dt>장소</dt><dd>{e(D["where"])}</dd></div>
-    <div><dt>전체 사회</dt><dd>{e(D["host"])}</dd></div>
   </dl>
   {ruler}
   <div class="slots">
