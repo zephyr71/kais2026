@@ -8,6 +8,7 @@
 ```
 index.html        홈 (소개, 일정, 학부생 포스터 세션, 자료집 안내, 조직위)
 apply.html        신청 / 자료 제출·수정 / 접수 조회
+sessions.html     세션표 (data/sessions.json 수정 후 `python3 tools/build_sessions.py`로 재생성)
 program.html      프로그램 (상태가 '확정'인 건만 자동 표시)
 proceedings.html  발제집 전자책 + 발표별 초록(공개 동의 건)
 js/config.js      배포 후 고칠 설정 (API 주소, 계좌, 전자책 주소, 문의 메일)
