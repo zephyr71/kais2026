@@ -4,7 +4,8 @@ import json, html, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, 'data', 'sessions.json'), encoding='utf-8'))
 e = html.escape
-DAY0, DAY1 = 12 * 60, 18 * 60
+DAY0, DAY1 = 12 * 60, 18 * 60 + 15
+NH = (DAY1 - DAY0) / 60
 
 def mins(t):
     h, m = t.split(':'); return int(h) * 60 + int(m)
@@ -15,6 +16,7 @@ def room_name(i): return D['rooms'][i - 1]
 def seg(ev, label, cls):
     l, r = pct(ev['start']), pct(ev['end'])
     href = '#' + ev['id']
+    if r - l < 6: cls += ' narrow'
     return (f'<a class="seg {cls}" href="{href}" style="left:{l:.3f}%;width:{r-l:.3f}%" '
             f'aria-label="{e(label)} {ev["start"]}~{ev["end"]}"><span>{e(label)}</span></a>')
 
@@ -23,12 +25,12 @@ for ev in D['events']:
     if ev['type'] in ('posters', 'talks'):
         lanes[ev['room']].append(seg(ev, ev['part'].replace('제', '').replace('부', '') + '부', f'r{ev["room"]}'))
     elif ev['type'] == 'plain':
-        lanes[0].append(seg(ev, ev['short'], 'r0'))
+        lanes[ev.get('room', 0)].append(seg(ev, ev['short'], 'r%d' % ev.get('room', 0)))
 ticks = ''.join(
-    f'<i class="tick{" last" if h == 18 else ""}" style="left:{(h-12)/6*100:.3f}%"><b>{h}</b></i>' for h in range(12, 19))
+    f'<i class="tick" style="left:{(h-12)*60/(DAY1-DAY0)*100:.3f}%"><b>{h}</b></i>' for h in range(12, 19))
 def lane(label, key, cls):
     return f'<div class="lane-label {cls}">{e(label)}</div><div class="lane">{"".join(lanes[key])}</div>'
-ruler = f'''<figure class="day" aria-label="하루 일정 한눈에 보기">
+ruler = f'''<figure class="day" aria-label="하루 일정 한눈에 보기" style="--n:{NH:.4f}">
 <div class="axis-label"></div><div class="axis" aria-hidden="true">{ticks}</div>
 {lane("전체", 0, "r0")}{lane(D["rooms"][0], 1, "r1")}{lane(D["rooms"][1], 2, "r2")}
 </figure>'''
@@ -53,7 +55,8 @@ for ev in D['events']:
         head = e(ev.get('part', '')) 
         title = e(ev['title'])
         note = f'<p class="muted">{e(ev["note"])}</p>' if ev.get('note') else ''
-        part = f'<p class="part">{head}</p>' if head else ''
+        rt = room_tag(ev['room']) if ev.get('room') else ''
+        part = f'<p class="part">{head} {rt}</p>' if (head or rt) else ''
         out.append(f'<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">{part}<h2>{title}</h2>{note}</div></article>')
     elif t == 'posters':
         lis = []

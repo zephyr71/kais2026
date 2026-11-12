@@ -9,10 +9,10 @@
 .axis { position: relative; height: 20px; }
 .tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); font-style: normal; }
 .tick b { position: absolute; top: 0; left: 4px; font: 500 12px/20px var(--mono); color: var(--muted); }
-.tick.last { border-left: 0; border-right: 1px solid var(--line); margin-left: -1px; }
-.tick.last b { left: auto; right: 4px; }
+
+
 .lane-label { font-size: 12.5px; line-height: 1.25; color: var(--sub); font-weight: 500; }
-.lane { position: relative; height: 40px; background: repeating-linear-gradient(to right, transparent 0, transparent calc(100%/6 - 1px), var(--line) calc(100%/6 - 1px), var(--line) calc(100%/6)); }
+.lane { position: relative; height: 40px; background: repeating-linear-gradient(to right, transparent 0, transparent calc(100%/var(--n) - 1px), var(--line) calc(100%/var(--n) - 1px), var(--line) calc(100%/var(--n))); }
 .seg { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 13px; font-weight: 700; color: #fff; overflow: hidden; border-right: 2px solid #fff; }
 .seg span { white-space: nowrap; }
 .seg.r1 { background: var(--r1); }
@@ -68,3 +68,4 @@
 @media (max-width: 560px) { .day { grid-template-columns: 5.2em 1fr; } .lane-label { font-size: 10.5px; } }
 @media (max-width: 560px) { .seg.r0 { font-size: 11px; } }
 .talk u { text-underline-offset: 3px; text-decoration-thickness: 1px; }
+@media (max-width: 560px) { .seg.narrow span { display: none; } }
