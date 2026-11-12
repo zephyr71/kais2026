@@ -67,3 +67,4 @@
 .sess .lane-label { word-break: keep-all; }
 @media (max-width: 560px) { .day { grid-template-columns: 5.2em 1fr; } .lane-label { font-size: 10.5px; } }
 @media (max-width: 560px) { .seg.r0 { font-size: 11px; } }
+.talk u { text-underline-offset: 3px; text-decoration-thickness: 1px; }

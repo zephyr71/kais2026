@@ -8,7 +8,7 @@
     "제1세미나실",
     "제2세미나실"
   ],
-  "footnote": "포스터 팀의 저자 표기는 가나다순입니다(동등 기여). 발표자·제목은 신청 내용 기준이며 변경될 수 있습니다. 세미나실 호수는 확정되는 대로 안내합니다.",
+  "footnote": "동등 기여 팀의 저자 표기는 가나다순입니다. 밑줄은 발표자, *는 교신저자를 뜻합니다. 발표자·제목은 신청 내용 기준이며 변경될 수 있습니다. 세미나실 호수는 확정되는 대로 안내합니다.",
   "events": [
     {
       "type": "plain",
@@ -96,9 +96,19 @@
           "title": "같은 댓글, 다른 신뢰?: 능동적 뉴스 탐색과 언론 신뢰"
         },
         {
-          "presenter": "이중호 (이화여자대학교 인공지능데이터사이언스학부)",
-          "co": "박지민 (이화여자대학교 사회학과)",
-          "title": "포용은 보호가 아니다: 디지털 포용 패러다임과 돌봄 AI 거버넌스의 재구성"
+          "presenter": null,
+          "title": "포용은 보호가 아니다: 디지털 포용 패러다임과 돌봄 AI 거버넌스의 재구성",
+          "authors": [
+            {
+              "name": "이중호",
+              "aff": "이화여자대학교 인공지능데이터사이언스학부",
+              "presenter": true
+            },
+            {
+              "name": "박지민",
+              "aff": "이화여자대학교 사회학과"
+            }
+          ]
         },
         {
           "presenter": "Barrau Camille Rose Melodie (고려대학교 일반대학원 미디어학과)",
@@ -106,8 +116,29 @@
         },
         {
           "presenter": "염채원 (한국외국어대학교)",
-          "co": "권세진 (한국외국어대학교), 문가은 (한국외국어대학교), 박주란 (한국외국어대학교)",
-          "title": "알고리즘 저항 행동이 인스타그램 릴스 추천 콘텐츠의 다양성에 미치는 영향 및 이용자 인식"
+          "title": "알고리즘 저항 행동이 인스타그램 릴스 추천 콘텐츠의 다양성에 미치는 영향 및 이용자 인식",
+          "authors": [
+            {
+              "name": "권세진",
+              "aff": "한국외국어대학교",
+              "presenter": false
+            },
+            {
+              "name": "문가은",
+              "aff": "한국외국어대학교",
+              "presenter": false
+            },
+            {
+              "name": "박주란",
+              "aff": "한국외국어대학교",
+              "presenter": false
+            },
+            {
+              "name": "염채원",
+              "aff": "한국외국어대학교",
+              "presenter": true
+            }
+          ]
         }
       ],
       "discussants": "지성욱 (한국외국어대학교), 이중호 (이화여자대학교 인공지능데이터사이언스학부)"
@@ -138,7 +169,7 @@
           "title": "유머의 외피를 쓴 혐오: 온라인 밈·유행어를 통한 혐오표현의 확산 과정"
         },
         {
-          "authors": "CHON NATALIA, GHERGHI PIOTR (이상 고려대학교 석사과정)",
+          "authors": "CHON NATALIA, GHERGHI PIOTR* (이상 고려대학교 석사과정)",
           "title": "Generation Z’s Perceptions of AI-Generated Deepfakes and Online Conflict: Trust, Hate Speech, and Platform Responses"
         },
         {

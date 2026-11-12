@@ -72,9 +72,12 @@ for ev in D['events']:
         if ev.get('chair'):
             rows.append(person_line('사회', ev['chair']))
         for tk in ev['talks']:
-            co = f'<small>공저 {e(tk["co"])}</small>' if tk.get('co') else ''
+            if tk.get('authors'):
+                au = ', '.join(('<u>%s</u>' % e(a['name']) if a.get('presenter') else e(a['name'])) + ' (%s)' % e(a['aff']) for a in tk['authors'])
+            else:
+                au = e(tk['presenter'])
             tcls = ' class="tbd"' if '업데이트 예정' in tk['title'] else ''
-            rows.append(f'<div class="rl talk"><span class="role">발표</span><span><b{tcls}>{e(tk["title"])}</b><small>{e(tk["presenter"])}</small>{co}</span></div>')
+            rows.append(f'<div class="rl talk"><span class="role">발표</span><span><b{tcls}>{e(tk["title"])}</b><small>{au}</small></span></div>')
         if ev.get('discussants'):
             rows.append(person_line('종합토론', ev['discussants']))
         out.append(f'<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">{"".join(parts)}{"".join(rows)}</div></article>')
