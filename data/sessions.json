@@ -77,6 +77,11 @@
         {
           "authors": "심재용 (건국대학교 글로컬캠퍼스)",
           "title": "PLANCELL (업데이트 예정)"
+        },
+        {
+          "authors": "권세진, 문가은, 박주란, 염채원 (이상 한국외국어대학교)",
+          "title": "알고리즘 저항 행동이 인스타그램 릴스 추천 콘텐츠의 다양성에 미치는 영향 및 이용자 인식",
+          "equal": true
         }
       ]
     },
@@ -119,36 +124,9 @@
         {
           "presenter": "Barrau Camille Rose Melodie (고려대학교 일반대학원 미디어학과)",
           "title": "누가 AI 활용의 정당성을 정하는가? 국내 대학 생성형 AI 정책의 내용 분석"
-        },
-        {
-          "presenter": "염채원 (한국외국어대학교)",
-          "title": "알고리즘 저항 행동이 인스타그램 릴스 추천 콘텐츠의 다양성에 미치는 영향 및 이용자 인식",
-          "authors": [
-            {
-              "name": "권세진",
-              "aff": "한국외국어대학교",
-              "presenter": false
-            },
-            {
-              "name": "문가은",
-              "aff": "한국외국어대학교",
-              "presenter": false
-            },
-            {
-              "name": "박주란",
-              "aff": "한국외국어대학교",
-              "presenter": false
-            },
-            {
-              "name": "염채원",
-              "aff": "한국외국어대학교",
-              "presenter": true
-            }
-          ],
-          "equal": true
         }
       ],
-      "discussants": "김경미 (연세대학교 사회발전연구소), 최항섭 (국민대 사회학과)"
+      "discussants": "김경미 (연세대학교 사회발전연구소), 최항섭 (국민대학교 사회학과)"
     },
     {
       "type": "posters",
