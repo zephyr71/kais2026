@@ -4,7 +4,7 @@ import json, html, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, 'data', 'sessions.json'), encoding='utf-8'))
 e = html.escape
-DAY0, DAY1 = 12 * 60, 18 * 60 + 15
+DAY0, DAY1 = 12 * 60, 18 * 60
 NH = (DAY1 - DAY0) / 60
 
 def mins(t):
@@ -20,9 +20,12 @@ def seg(ev, label, cls):
     return (f'<a class="seg {cls}" href="{href}" style="left:{l:.3f}%;width:{r-l:.3f}%" '
             f'aria-label="{e(label)} {ev["start"]}~{ev["end"]}"><span>{e(label)}</span></a>')
 
-lanes = {0: [], 1: [], 2: []}
+lanes = {0: [], 1: [], 2: [], 3: []}
 for ev in D['events']:
-    if ev['type'] in ('posters', 'talks'):
+    if ev['type'] == 'posters':
+        for rm in ev['rooms']:
+            lanes[rm['room']].append(seg(ev, ev['part'].replace('제', '').replace('부', '') + '부', f'r{rm["room"]}'))
+    elif ev['type'] == 'talks':
         lanes[ev['room']].append(seg(ev, ev['part'].replace('제', '').replace('부', '') + '부', f'r{ev["room"]}'))
     elif ev['type'] == 'plain':
         lanes[ev.get('room', 0)].append(seg(ev, ev['short'], 'r%d' % ev.get('room', 0)))
@@ -34,6 +37,7 @@ def lane(label, key, cls):
 ruler = f'''<figure class="day" aria-label="하루 일정 한눈에 보기" style="--n:{NH:.4f}">
 <div class="axis-label"></div><div class="axis" aria-hidden="true">{ticks}</div>
 {lane("전체", 0, "r0")}{lane(D["rooms"][0], 1, "r1")}{lane(D["rooms"][1], 2, "r2")}
+{lane(D["rooms"][2], 3, "r3")}
 </figure>'''
 
 # ---- 본문 ----
@@ -60,14 +64,17 @@ for ev in D['events']:
         part = f'<p class="part">{head} {rt}</p>' if (head or rt) else ''
         out.append(f'<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">{part}<h2>{title}</h2>{note}</div></article>')
     elif t == 'posters':
-        lis = []
-        for tm in ev['teams']:
-            ti = tm['title']
-            tcls = ' class="tbd"' if ti.startswith('(') else ''
-            lis.append(f'<li><span{tcls}>{e(ti)}</span><small>{e(tm["authors"])}{EQ if tm.get("equal") else ""}</small></li>')
+        groups = []
+        for rm in ev['rooms']:
+            lis = []
+            for tm in rm['teams']:
+                ti = tm['title']
+                tcls = ' class="tbd"' if ti.startswith('(') or '업데이트 예정' in ti else ''
+                lis.append(f'<li><span{tcls}>{e(ti)}</span><small>{e(tm["authors"])}{EQ if tm.get("equal") else ""}</small></li>')
+            groups.append(f'<section class="pgroup"><h3>{e(rm["label"])} {room_tag(rm["room"])}</h3><ul class="posters">{"".join(lis)}</ul></section>')
         out.append(f'''<article class="slot" id="{ev["id"]}">{when(ev)}<div class="body">
-<p class="part">{e(ev["part"])} {room_tag(ev["room"])}</p><h2>{e(ev["title"])}</h2>
-<ul class="posters">{"".join(lis)}</ul></div></article>''')
+<p class="part">{e(ev["part"])} <span class="kind">{e(ev["round"])}</span></p><h2>{e(ev["title"])}</h2>
+<div class="pcols">{"".join(groups)}</div></div></article>''')
     elif t == 'talks':
         kind = f'<span class="kind">{e(ev["kind"])}</span>' if ev.get('kind') else ''
         parts = [f'<p class="part">{e(ev["part"])} {kind} {room_tag(ev["room"])}</p><h2>{e(ev["title"])}</h2>']

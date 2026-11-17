@@ -1,5 +1,5 @@
 /* 세션표: 하루 눈금자 + 시간 기둥 */
-.sess { padding-top: 48px; padding-bottom: 64px; --r1: var(--ink); --r2: var(--accent); }
+.sess { padding-top: 48px; padding-bottom: 64px; --r1: var(--ink); --r2: var(--accent); --r3: #4d6b3a; }
 .sess h1 { font-size: clamp(28px, 5vw, 40px); }
 .sess .lead { font-weight: 700; font-size: 19px; line-height: 1.5; }
 .sess .theme { font-weight: 400; color: var(--sub); font-size: 17px; }
@@ -71,3 +71,11 @@
 @media (max-width: 560px) { .seg.narrow span { display: none; } }
 .room em { font-style: normal; font-weight: 400; color: var(--muted); }
 .lane-label small { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); }
+
+.seg.r3 { background: var(--r3); }
+.room.r3 i { background: var(--r3); }
+.pcols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; margin-top: 18px; }
+.pgroup h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--sub); display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: center; }
+.pcols .posters { margin-top: 10px; }
+.pcols .posters li > span { font-size: 16px; }
+@media (max-width: 900px) { .pcols { grid-template-columns: 1fr; gap: 28px; } }
