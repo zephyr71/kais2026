@@ -79,3 +79,14 @@
 .pcols .posters { margin-top: 10px; }
 .pcols .posters li > span { font-size: 16px; }
 @media (max-width: 900px) { .pcols { grid-template-columns: 1fr; gap: 28px; } }
+
+.tl { color: inherit; font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: var(--muted); }
+.tl:hover, .tl:focus-visible { text-decoration-thickness: 2px; text-decoration-color: var(--ink); }
+.ltag { font-style: normal; font-size: 11.5px; font-weight: 500; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--muted); color: var(--sub); white-space: nowrap; vertical-align: 2px; }
+.posters li > .tl, .rl b .tl { font-size: inherit; }
+.abslist { margin-top: 28px; border-top: 1.5px solid var(--ink); max-width: 46em; }
+.abs { padding: 26px 0 28px; border-bottom: 1px solid var(--line); scroll-margin-top: 84px; }
+.abs h2 { margin: 2px 0 0; font-size: clamp(19px, 3vw, 23px); line-height: 1.45; letter-spacing: -0.02em; }
+.abs .by { margin: 6px 0 14px; color: var(--muted); font-size: 15px; }
+.abs p:not(.part):not(.by) { margin: 0 0 10px; line-height: 1.75; font-size: 16.5px; }
+.abs:target { background: #fafaf7; }
