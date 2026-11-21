@@ -217,3 +217,55 @@ apage += f'''<main id="main">
 '''
 open(os.path.join(ROOT, 'abstracts.html'), 'w', encoding='utf-8').write(apage)
 print('abstracts.html written', len(cards), 'cards')
+
+# ---- proceedings.html (발제집: 공개 동의한 초록·원문 모음) ----
+seen2, pcards = set(), []
+for ev, t, au, title in entries():
+    i = t.get('abs')
+    if not i or i in seen2 or i not in ABS: continue
+    seen2.add(i)
+    a = ABS[i]
+    paras = ''.join(f'<p>{e(p.strip())}</p>' for p in a['text'].split('\n') if p.strip())
+    where = ev['part'] + (' ' + ev.get('round', '') if ev.get('round') else '')
+    link = f'<p class="orig"><a class="btn ghost" href="{e(a["file"])}" target="_blank" rel="noopener">원문 PDF 보기</a></p>' if a.get('file') else ''
+    if not paras and not link: continue
+    pcards.append(f'<article class="abs" id="p-{i}"><p class="part">{e(where)}</p><h2>{e(title)}</h2><p class="by">{e(au)}</p>{paras}{link}</article>')
+ppage = page.split('<main id="main">')[0]
+ppage = ppage.replace('<title>세션표 · ', '<title>발제집 · ').replace(' 세션표">', ' 발제집">')
+ppage = ppage.replace('<a href="sessions.html" aria-current="page">세션표</a>', '<a href="sessions.html">세션표</a>')
+ppage = ppage.replace('<a href="proceedings.html">발제집</a>', '<a href="proceedings.html" aria-current="page">발제집</a>')
+ppage += f'''<main id="main">
+<div class="wrap sess">
+  <h1>발제집</h1>
+  <p class="lead">{e(D["title"])}<br><span class="theme">발표자가 공개에 동의한 초록과 원문 {len(pcards)}편을 세션 순서대로 모았습니다. 공개에 동의하지 않은 발표는 싣지 않았으며, 제목은 세션표 기준입니다.</span></p>
+  <div class="search"><label class="lab" for="q" style="font-weight:700;font-size:15px">검색 (제목, 발표자, 초록)</label><input type="text" id="q" autocomplete="off"></div>
+  <div class="abslist" id="plist">
+{chr(10).join(pcards)}
+  </div>
+  <p class="empty" id="pnone" hidden>검색 결과가 없습니다.</p>
+  <div class="btn-row"><a class="btn ghost" href="sessions.html">세션표로 돌아가기</a></div>
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>한국정보사회학회 · 2026 가을철 정기학술대회 조직위원회</span>
+    <span id="contact"></span>
+  </div>
+</footer>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function(){{
+  var q=document.getElementById('q'),cards=[].slice.call(document.querySelectorAll('#plist .abs')),none=document.getElementById('pnone');
+  q.addEventListener('input',function(){{
+    var k=q.value.trim().toLowerCase(),n=0;
+    cards.forEach(function(c){{var m=!k||c.textContent.toLowerCase().indexOf(k)>-1;c.hidden=!m;if(m)n++;}});
+    none.hidden=n>0;
+  }});
+}})();
+</script>
+</body>
+</html>
+'''
+open(os.path.join(ROOT, 'proceedings.html'), 'w', encoding='utf-8').write(ppage)
+print('proceedings.html written', len(pcards), 'cards')
