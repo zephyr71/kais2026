@@ -110,7 +110,6 @@ NAV = '''<a href="index.html#about">소개</a>
       <a href="index.html#schedule">일정</a>
       <a href="index.html#venue">오시는 길</a>
       <a href="sessions.html" aria-current="page">세션표</a>
-      <a href="program.html">프로그램</a>
       <a href="proceedings.html">발제집</a>
       <a class="cta" href="apply.html">신청</a>'''
 
@@ -153,7 +152,7 @@ page = f'''<!doctype html>
   <p class="foot">※ {e(D["footnote"])}</p>
   <p class="foot">※ 제목에 <i class="ltag">초록</i> <i class="ltag">원문</i> 표시가 있으면 누르면 해당 자료를 볼 수 있습니다.</p>
   <p class="foot">※ 저자가 신청 시 공개를 원하지 않은 경우에는 초록과 원문 링크를 연결하지 않으며, 공동 저자의 공개 범위가 서로 다른 팀은 가장 좁은 범위에 맞춥니다. 링크가 없는 발표의 자료는 학술대회 현장에서 발표자를 통해 확인하실 수 있습니다.</p>
-  <div class="btn-row"><a class="btn ghost" href="index.html#venue">오시는 길</a><a class="btn ghost" href="program.html">발표 초록 보기</a></div>
+  <div class="btn-row"><a class="btn ghost" href="index.html#venue">오시는 길</a><a class="btn ghost" href="proceedings.html">발제집(초록·원문) 보기</a></div>
 </div>
 </main>
 
