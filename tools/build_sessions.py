@@ -5,7 +5,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, 'data', 'sessions.json'), encoding='utf-8'))
 ABS = json.load(open(os.path.join(ROOT, 'data', 'abstracts.json'), encoding='utf-8'))
 e = html.escape
-DAY0, DAY1 = 12 * 60, 18 * 60 + 10
+DAY0, DAY1 = 12 * 60, 18 * 60
 NH = (DAY1 - DAY0) / 60
 
 def mins(t):
