@@ -138,12 +138,6 @@
        "abs": "P-002"
       },
       {
-       "authors": "CHON NATALIA, GHERGHI PIOTR* (이상 고려대학교 석사과정)",
-       "title": "Generation Z’s Perceptions of AI-Generated Deepfakes and Online Conflict: Trust, Hate Speech, and Platform Responses",
-       "equal": true,
-       "abs": "P-003"
-      },
-      {
        "authors": "유민우 (성균관대학교)",
        "title": "숏폼 표현 강도 피처는 흥행 예측력을 높이는가: YouTube Shorts 과거 영상 기반 예측 연구",
        "abs": "U-021"
@@ -213,7 +207,7 @@
    "id": "p2",
    "part": "제2부",
    "start": "14:15",
-   "end": "15:00",
+   "end": "15:15",
    "title": "아카데믹 세션",
    "room": 1,
    "chair": "김용규 (한양대학교)",
@@ -237,22 +231,28 @@
       }
      ],
      "abs": "P-005"
+    },
+    {
+     "presenter": "CHON NATALIA, GHERGHI PIOTR* (이상 고려대학교 석사과정)",
+     "title": "Generation Z’s Perceptions of AI-Generated Deepfakes and Online Conflict: Trust, Hate Speech, and Platform Responses",
+     "equal": true,
+     "abs": "P-003"
     }
    ],
    "discussants": "김경미 (연세대학교 사회발전연구소), 김수정 (강남대학교)"
   },
   {
    "type": "move",
-   "start": "15:00",
-   "end": "15:10",
+   "start": "15:15",
+   "end": "15:25",
    "note": "학생 및 참가자 전원 제2세미나실과 제3세미나실로 이동"
   },
   {
    "type": "posters",
    "id": "p3",
    "part": "제3부",
-   "start": "15:10",
-   "end": "16:00",
+   "start": "15:25",
+   "end": "16:15",
    "title": "포스터 세션",
    "round": "2회차",
    "rooms": [
@@ -365,12 +365,6 @@
        "abs": "P-002"
       },
       {
-       "authors": "CHON NATALIA, GHERGHI PIOTR* (이상 고려대학교 석사과정)",
-       "title": "Generation Z’s Perceptions of AI-Generated Deepfakes and Online Conflict: Trust, Hate Speech, and Platform Responses",
-       "equal": true,
-       "abs": "P-003"
-      },
-      {
        "authors": "유민우 (성균관대학교)",
        "title": "숏폼 표현 강도 피처는 흥행 예측력을 높이는가: YouTube Shorts 과거 영상 기반 예측 연구",
        "abs": "U-021"
@@ -421,8 +415,8 @@
   },
   {
    "type": "move",
-   "start": "16:00",
-   "end": "16:10",
+   "start": "16:15",
+   "end": "16:25",
    "note": "학생 및 참가자 전원 제1세미나실로 이동"
   },
   {
@@ -430,8 +424,8 @@
    "id": "p4",
    "part": "제4부",
    "kind": "프로페셔널 세션",
-   "start": "16:10",
-   "end": "17:10",
+   "start": "16:25",
+   "end": "17:25",
    "title": "연구발표 및 토론",
    "room": 1,
    "chair": "김성철 (고려대학교 미디어학부)",
@@ -456,7 +450,7 @@
    "type": "plain",
    "id": "p5",
    "part": "제5부",
-   "start": "17:10",
+   "start": "17:25",
    "end": "18:00",
    "title": "정기총회 및 시상식 (미래인재발표상 및 KISO 대상)",
    "short": "5부",
