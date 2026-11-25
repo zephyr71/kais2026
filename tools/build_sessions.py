@@ -144,6 +144,8 @@ page = f'''<!doctype html>
   <dl class="facts">
     <div><dt>일시</dt><dd>{e(D["when"])}</dd></div>
     <div><dt>장소</dt><dd>{e(D["where"])}</dd></div>
+    <div><dt>주최</dt><dd>{e(" · ".join(D["organizers"]))}</dd></div>
+    <div><dt>후원</dt><dd>{e(" · ".join(D["sponsors"]))}</dd></div>
   </dl>
   {ruler}
   <div class="slots">
